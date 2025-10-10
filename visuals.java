@@ -1,5 +1,3 @@
-package AI1.AIOrHuman;
-
 import java.util.*;
 //import java.io.*;
 import javax.swing.*;
@@ -19,8 +17,8 @@ public class visuals extends JFrame implements ActionListener {
     // Number of moves taken
     int moves = 0;
     boolean active = false;
-    PriorityQueue<String> open = new PriorityQueue<String>((i1, i2) -> Integer.compare(Integer.parseInt(i1.substring(i1.indexOf(":")+1)),Integer.parseInt(i2.substring(i2.indexOf(":")+1))));
-    ArrayList<String> closed = new ArrayList<String>(100);
+    PriorityQueue<int[]> open = new PriorityQueue<int[]>((i1, i2) -> Integer.compare(i1[9],i2[9]));
+    ArrayList<int[]> closed = new ArrayList<int[]>(100);
     
 
     //Creates the board
@@ -167,14 +165,8 @@ public class visuals extends JFrame implements ActionListener {
     // [Helper Function] Calculate the distance if 0 were to swap with one of its neighbors
     public int doCalc(int n, int index) {
         swap(index, index+(2*n-3));
-        String tmp = stringy(arrNum).substring(0,9);
         int hold = 60;
-        if (!closed.contains(tmp)) {
-            closed.add(tmp);
-            tmp+=":"+hold;
-            hold = calculate()+moves;
-            closed.add(tmp);
-        }
+        hold = calculate()+moves;
         swap(index+(2*n-3), index);
         return hold;
     }
@@ -202,11 +194,8 @@ public class visuals extends JFrame implements ActionListener {
     // Uses A* to solve the board
     @SuppressWarnings("unused")
     public void solve() {
-        open.add(stringy(arrNum));
         for (int calc = calculate(); calc!=0; calc=calculate()) {
             int[] totals = getChoices();
-            String tmp = open.poll();
-            int[] deStr = deString(tmp);
         }
         active = false;
     }
