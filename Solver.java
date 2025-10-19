@@ -51,9 +51,17 @@ public class Solver extends JFrame implements ActionListener {
     public static void main(String[] args) {
         Solver a = new Solver();
         a.setVisible(true);
+        boolean started = false;
+        String answer = "";
         while (true) {
             if (a.start==true) {
-                a.solve();
+                answer = a.solve();
+                started = true;
+                System.out.println("Hi");
+            }
+            else if (started==true) {
+                a.slowmo(answer);
+                break;
             }
             wait(1.0);
         }
@@ -172,7 +180,7 @@ public class Solver extends JFrame implements ActionListener {
         return arr;
     }
 
-    public void solve() {
+    public String solve() {
         String[] choice = {stringy(arrNum,-1), ""}; // Initial State
 
         for (int calc = calculate(arrNum); calc!=0; calc=calculate(arrNum)) { // Calculate how far away the board state is, stop if it's correct, and calculate each time
@@ -186,6 +194,7 @@ public class Solver extends JFrame implements ActionListener {
             closed.add(choice[0].substring(0,9));
 
             choice = open.poll();
+            // System.out.println(choice[0].substring(9));
             int[] newArr = unString(choice[0]);
             completeSwap(newArr);
             // System.out.println(closed);
@@ -193,7 +202,26 @@ public class Solver extends JFrame implements ActionListener {
             // wait(.05);
 
         }
-        System.out.println(choice[1]);
+        // System.out.println(choice[1]);
         start = false;
+        return choice[1];
+    }
+
+    public void slowmo(String answer) {
+        String choice = closed.get(0);
+        int[] deStringed = unString(choice);
+        completeSwap(deStringed);
+
+        int index = findIndex(arrNum, 0);
+        String mult = "ulrd";
+
+        System.out.println(answer);
+        for (int i=0; i<answer.length(); i++) {
+            int swapper = index + mult.indexOf(answer.charAt(i))*2-3;
+            // System.out.println(index + ": " + swapper + ": " + answer.charAt(i));
+            swap(index, swapper);
+            index=swapper;
+            wait(2.5);
+        }
     }
 }
