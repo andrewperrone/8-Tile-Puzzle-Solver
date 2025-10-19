@@ -90,23 +90,6 @@ public class visuals extends JFrame implements ActionListener {
         arrNum[9] = calculate();
     }
 
-    // [Helper Function] Calculate how far away the solver is from solving the board completely
-    /*
-     * 0 1 2
-     * 3 4 5
-     * 6 7 8
-     * (i%3, i/3)
-     */
-    public int calculate() {
-        int total = 0;
-        for (int i=0; i<arrNum.length-1; i++) {
-            int n = Math.abs(i%3-arrNum[i]%3)+Math.abs(i/3-arrNum[i]/3);
-            // System.out.println(arrNum[i]+": "+n);
-            total += n;
-        }
-        return total;
-    }
-
     // [Helper Function] Swap two pieces with each other
     // Arguments: one is the index of the zero piece, two is the index of the piece you want to swap with it
     public void swap(int one, int two) {
@@ -162,18 +145,36 @@ public class visuals extends JFrame implements ActionListener {
         return arr;
     }
 
+        // [Helper Function] Calculate how far away the solver is from solving the board completely
+    /*
+     * 0 1 2
+     * 3 4 5
+     * 6 7 8
+     * (i%3, i/3)
+     */
+    public int calculate() {
+        int total = 0;
+        for (int i=0; i<arrNum.length-1; i++) {
+            int n = Math.abs(i%3-arrNum[i]%3)+Math.abs(i/3-arrNum[i]/3);
+            // System.out.println(arrNum[i]+": "+n);
+            if (arrNum[i]==0) n=0;
+            total += n*n;
+        }
+        return total;
+    }
+
     // [Helper Function] Calculate the distance if 0 were to swap with one of its neighbors
     public int doCalc(int n, int index) {
         swap(index, index+(2*n-3));
-        int hold = 60;
-        hold = calculate()+moves;
+        int hold = 600;
+        hold = calculate();
         swap(index+(2*n-3), index);
         return hold;
     }
 
     // [Helper Function] get a list of all possible choices to swap with
     public int[] getChoices() {
-        int max = 60;
+        int max = 600;
         int index = findIndex(arrNum, 0);
         int[] totals = new int[] {max, max, max, max}; // Up, Left, Right, Down
         if (index/3!=0) {// not 0, 1, 2; Swapping 0 with index above it
@@ -196,6 +197,11 @@ public class visuals extends JFrame implements ActionListener {
     public void solve() {
         for (int calc = calculate(); calc!=0; calc=calculate()) {
             int[] totals = getChoices();
+            System.out.println(Arrays.toString(totals));
+            try {Thread.sleep(1000);} catch(Exception e) {}
+            int izero = findIndex(arrNum, 0);
+            int choice = findIndex(totals, findSmall(totals))*2-3;
+            swap(izero, choice+izero);
         }
         active = false;
     }
