@@ -124,6 +124,13 @@ public class Solver extends JFrame implements ActionListener {
             if (array[i]==0) n=0;
             total += n;
         }
+
+        if (array[6]==(array[7]-1) && (array[8]-2)==6 && array[6]==array[8]-2) {
+            total-=2;
+        }
+        if (array[2]==2 && array[5]==5 && array[8]==8) {
+            total-=2;
+        }
         return total;
     }
 
