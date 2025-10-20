@@ -49,31 +49,34 @@ public class Solver extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
+        //Set up the board
         Solver a = new Solver();
         a.setVisible(true);
-        boolean started = false;
-        String answer = "";
+        boolean started = false; // Whether it has started the replay or not
+        String answer = ""; // Solution to the randomized board
+
+
         while (true) {
             if (a.start==true) {
-                answer = a.solve();
-                started = true;
-                System.out.println("Hi");
-                a.start=false;
+                answer = a.solve(); // Start the solving proccess
+                started = true; // Code will now begin the replay
+                a.start=false; // No longer trying to solve
             }
             else if (started==true) {
-                a.slowmo(answer);
-                started=false;
-                a.closed.clear();
-                a.open.clear();
+                a.slowmo(answer); // Replay the solve
+                started=false; // Replay has ended
+                a.closed.clear(); // clear out the old states-used data
+                a.open.clear(); // clear out the old states-to-use data
             }
             else {
-                wait(1.0);
+                wait(1.0); // Keeps the while loop and JFrame in sync
             }
         }
     }
 
-    // Randomizes the board
+    // Randomizes the board, and re-runs if the board isn't solvable
     public void randomize() {
+        // randomize
         ArrayList<Integer> list = new ArrayList<Integer>(arr.length);
         for (int i=0; i<arr.length; i++) {
             list.add(i);
@@ -87,6 +90,7 @@ public class Solver extends JFrame implements ActionListener {
                 arr[i].setText("");
             }
         }
+        //check if it's solvable
         int count = 0;
         for (int i=0; i<arrNum.length; i++) {
             if (arrNum[i]!=0) {
@@ -99,7 +103,7 @@ public class Solver extends JFrame implements ActionListener {
                 }
             }
         }
-        if (count%2==1) {
+        if (count%2==1) { // Re-randomize if it's unsolvable
             randomize();
         }
     }
@@ -111,6 +115,7 @@ public class Solver extends JFrame implements ActionListener {
         arrNum[two] = 0; // replace the piece at index two with 0
     }
 
+    // [Helper Function] Swap two pieces with each other, and show the user the swap
     public void swapDisplay(int one, int two) {
         arr[two].setText(""); // Set piece at index two to "0"
         arr[one].setText("" + arrNum[two]); // Set the piece at index one to whatever was at index two
@@ -118,12 +123,14 @@ public class Solver extends JFrame implements ActionListener {
         arrNum[two] = 0; // replace the piece at index two with 0
     }
 
+    // Swap all pieces with each other
     public void completeSwap(int[] array) {
         for (int i=0; i<array.length; i++) {
             arrNum[i] = array[i];
         }
     }
 
+    //set the display to the current board
     public void changeDisplay() {
         for (int i=0; i<arrNum.length; i++) {
             arr[i].setText(""+arrNum[i]);
@@ -131,6 +138,7 @@ public class Solver extends JFrame implements ActionListener {
         }
     }
 
+    // interact with the buttons here
     public void actionPerformed(ActionEvent e) {
         if (e.getSource()==random) {
             randomize();
@@ -149,33 +157,30 @@ public class Solver extends JFrame implements ActionListener {
      */
     public static int calculate(int[] array) {
         int total = 0;
-        int num = 2;
         for (int i=0; i<array.length-1; i++) {
             int heightDif = Math.abs(i/3-array[i]/3);
-            // heightDif*=heightDif;
             int widthDif = Math.abs(i%3-array[i]%3);
-            // widthDif*=widthDif;
-            int n = heightDif+widthDif;
+
+            int n = heightDif+widthDif; // Manhattan distance
             if (array[i]==0) n=0;
             total += n;
         }
 
-        if (array[6]==(array[7]-1) && (array[8]-2)==6 && array[6]==array[8]-2) {
+        int num = 2; // numerical advantage given to states with solved sides
+        if (array[6]==6 && array[7]==7 && array[8]==8) {// prioritize states where the bottom 3 pieces are solved
             total-=num;
         }
-        if (array[2]==2 && array[5]==5 && array[8]==8) {
+        if (array[2]==2 && array[5]==5 && array[8]==8) {// prioritize states where the right three are solved 
             total-=num;
         }
         return total;
     }
 
-    public static String stringy(int[] array, int n) {
+    // turn arrays into a string
+    public static String stringy(int[] array) {
         String tmp = "";
         for (int i=0; i<array.length; i++) {
             tmp+=array[i];
-        }
-        if (n!=-1) {
-            tmp+=(calculate(array)+n);
         }
         return tmp;
     }
@@ -190,22 +195,29 @@ public class Solver extends JFrame implements ActionListener {
         return -1;
     }
 
+    // Calculates each path's value, keeping track of the path required to get there, and adds it to the open list if it isn't already in play
+    // val makes sure that the solver doesn't try to move out of bounds
+    // index is the index of the 0
+    // addIndex is how much do you have to add to get to the piece 0 swaps to in a 1D array [-3,-1,1,0] = [up,left,right,down]
+    // moves is the previous moves used to get to this state
     public void doCalc(int val, int index, int addIndex, String moves) {
         if (val!=0) {
             String[] choices = new String[] {"u", "l", "r", "d"};
             moves+=choices[(addIndex+3)/2];
 
             swap(index, index+addIndex);
-            String tmp = stringy(arrNum, -1);
+
+            String tmp = stringy(arrNum);
+
             if (!closed.contains(tmp)) {
                 String[] toAdd = new String[] {tmp,moves, (calculate(arrNum)+moves.length())+""};
-                // test += "[ " + tmp.substring(0, 9) + ":" + tmp.substring(9) + ", " + moves + " ]\n";
                 open.add(toAdd);
             }
             swap(index+addIndex,index);
         }
     }
 
+    // Simple wait command to slow down the replay
     public static void wait(double time) {
         try {
             Thread.sleep((int)(time*1000));
@@ -215,6 +227,7 @@ public class Solver extends JFrame implements ActionListener {
         }
     }
 
+    // convert a string back into an array
     public static int[] unString(String tmp) {
         int[] arr = new int[9];
         for (int i=0; i<arr.length; i++) {
@@ -223,6 +236,7 @@ public class Solver extends JFrame implements ActionListener {
         return arr;
     }
 
+    // determine if the solver should keep trying to solve
     public static boolean keepGoing(int[] arr) {
         for (int i=0; i<arr.length; i++) {
             if (arr[i]-i!=0) {
@@ -232,36 +246,31 @@ public class Solver extends JFrame implements ActionListener {
         return false;
     }
 
+    // solves the board
     public String solve() {
-        String[] choice = {stringy(arrNum,-1), "", "0"}; // Initial State
-        // int i = 0;
+        String[] choice = {stringy(arrNum), "", "0"}; // Initial State
         while (keepGoing(arrNum)) { // Calculate how far away the board state is, stop if it's correct, and calculate each time
             int index = findIndex(arrNum, 0);
 
-            doCalc(index/3, index, -3, choice[1]);
-            doCalc(index%3, index, -1, choice[1]);
-            doCalc(index%3-2, index, 1, choice[1]);
-            doCalc(index/3-2, index, 3, choice[1]);
+            doCalc(index/3, index, -3, choice[1]); // up
+            doCalc(index%3, index, -1, choice[1]); // left
+            doCalc(index%3-2, index, 1, choice[1]); // right
+            doCalc(index/3-2, index, 3, choice[1]); // down
 
-            closed.add(choice[0]);
+            closed.add(choice[0]); // Adds the state that is currenty being viewed
 
-            choice = open.poll();
-            // System.out.println(choice[0].substring(9));
-            int[] newArr = unString(choice[0]);
-            completeSwap(newArr);
-            changeDisplay();
-            // System.out.println(closed);
-            // System.out.println(test);
-            // wait(.5);
-            // i++;
-            // System.out.println(i +":"+ choice[0].substring(9));
-            // System.out.println(calc+choice[1].length());
+            choice = open.poll(); // gets the new most efficient state
+            int[] newArr = unString(choice[0]); // the array of the next state
+            completeSwap(newArr); // swap the current array with the new one
+
+            changeDisplay(); // cool visual effects
         }
-        // System.out.println(choice[1]);
+
         start = false;
         return choice[1];
     }
 
+    // shows the user how the board was solved
     public void slowmo(String answer) {
         String choice = closed.get(0);
         int[] deStringed = unString(choice);
