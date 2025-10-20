@@ -15,9 +15,9 @@ public class Solver extends JFrame implements ActionListener {
     // button to use A*
     JButton solve = new JButton("Solve");
     // Prioritize which path to go down based on which path has the smallest calculate
-    PriorityQueue<String[]> open = new PriorityQueue<String[]>((i1, i2) -> Integer.compare(Integer.parseInt(i1[0].substring(9)),Integer.parseInt(i2[0].substring(9))));
+    PriorityQueue<String[]> open = new PriorityQueue<String[]>((i1, i2) -> Integer.compare(Integer.parseInt(i1[2]),Integer.parseInt(i2[2])));
     // Configurations already tried
-    ArrayList<String> closed = new ArrayList<>();
+    ArrayList<String> closed = new ArrayList<>(1000000);
     // Tells me that we've started solving
     boolean start = false;
 
@@ -96,6 +96,7 @@ public class Solver extends JFrame implements ActionListener {
     public void completeSwap(int[] array) {
         for (int i=0; i<array.length; i++) {
             arr[i].setText(""+array[i]);
+            if (array[i]==0) arr[i].setText("");
             arrNum[i] = array[i];
         }
     }
@@ -153,10 +154,10 @@ public class Solver extends JFrame implements ActionListener {
             moves+=choices[(addIndex+3)/2];
 
             swap(index, index+addIndex);
-            String tmp = stringy(arrNum, moves.length());
-            if (!closed.contains(tmp.substring(0,9))) {
-                String[] toAdd = new String[] {tmp,moves};
-                test += "[ " + tmp.substring(0, 9) + ":" + tmp.substring(9) + ", " + moves + " ]\n";
+            String tmp = stringy(arrNum, -1);
+            if (!closed.contains(tmp)) {
+                String[] toAdd = new String[] {tmp,moves, (calculate(arrNum)+moves.length())+""};
+                // test += "[ " + tmp.substring(0, 9) + ":" + tmp.substring(9) + ", " + moves + " ]\n";
                 open.add(toAdd);
             }
             swap(index+addIndex,index);
@@ -181,8 +182,8 @@ public class Solver extends JFrame implements ActionListener {
     }
 
     public String solve() {
-        String[] choice = {stringy(arrNum,-1), ""}; // Initial State
-
+        String[] choice = {stringy(arrNum,-1), "", "0"}; // Initial State
+        int i = 0;
         for (int calc = calculate(arrNum); calc!=0; calc=calculate(arrNum)) { // Calculate how far away the board state is, stop if it's correct, and calculate each time
             int index = findIndex(arrNum, 0);
 
@@ -191,7 +192,7 @@ public class Solver extends JFrame implements ActionListener {
             doCalc(index%3-2, index, 1, choice[1]);
             doCalc(index/3-2, index, 3, choice[1]);
 
-            closed.add(choice[0].substring(0,9));
+            closed.add(choice[0]);
 
             choice = open.poll();
             // System.out.println(choice[0].substring(9));
@@ -199,8 +200,9 @@ public class Solver extends JFrame implements ActionListener {
             completeSwap(newArr);
             // System.out.println(closed);
             // System.out.println(test);
-            // wait(.05);
-
+            // wait(.5);
+            // i++;
+            // System.out.println(i +":"+ choice[0].substring(9));
         }
         // System.out.println(choice[1]);
         start = false;
@@ -221,7 +223,7 @@ public class Solver extends JFrame implements ActionListener {
             // System.out.println(index + ": " + swapper + ": " + answer.charAt(i));
             swap(index, swapper);
             index=swapper;
-            wait(2.5);
+            wait(1.75);
         }
     }
 }
