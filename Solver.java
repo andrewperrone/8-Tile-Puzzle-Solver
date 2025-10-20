@@ -58,12 +58,17 @@ public class Solver extends JFrame implements ActionListener {
                 answer = a.solve();
                 started = true;
                 System.out.println("Hi");
+                a.start=false;
             }
             else if (started==true) {
                 a.slowmo(answer);
-                break;
+                started=false;
+                a.closed.clear();
+                a.open.clear();
             }
-            wait(1.0);
+            else {
+                wait(1.0);
+            }
         }
     }
 
@@ -82,11 +87,31 @@ public class Solver extends JFrame implements ActionListener {
                 arr[i].setText("");
             }
         }
+        int count = 0;
+        for (int i=0; i<arrNum.length; i++) {
+            if (arrNum[i]!=0) {
+                for (int j=i+1; j<arrNum.length; j++) {
+                    if (arrNum[j]!=0) {
+                        if (arrNum[i]>arrNum[j]) {
+                            count++;
+                        }
+                    }
+                }
+            }
+        }
+        if (count%2==1) {
+            randomize();
+        }
     }
 
     // [Helper Function] Swap two pieces with each other
     // Arguments: one is the index of the zero piece, two is the index of the piece you want to swap with it
     public void swap(int one, int two) {
+        arrNum[one] = arrNum[two]; // replace 0 with the piece at index two
+        arrNum[two] = 0; // replace the piece at index two with 0
+    }
+
+    public void swapDisplay(int one, int two) {
         arr[two].setText(""); // Set piece at index two to "0"
         arr[one].setText("" + arrNum[two]); // Set the piece at index one to whatever was at index two
         arrNum[one] = arrNum[two]; // replace 0 with the piece at index two
@@ -95,9 +120,14 @@ public class Solver extends JFrame implements ActionListener {
 
     public void completeSwap(int[] array) {
         for (int i=0; i<array.length; i++) {
-            arr[i].setText(""+array[i]);
-            if (array[i]==0) arr[i].setText("");
             arrNum[i] = array[i];
+        }
+    }
+
+    public void changeDisplay() {
+        for (int i=0; i<arrNum.length; i++) {
+            arr[i].setText(""+arrNum[i]);
+            if (arrNum[i]==0) arr[i].setText("");
         }
     }
 
@@ -119,17 +149,22 @@ public class Solver extends JFrame implements ActionListener {
      */
     public static int calculate(int[] array) {
         int total = 0;
+        int num = 2;
         for (int i=0; i<array.length-1; i++) {
-            int n = Math.abs(i%3-array[i]%3)+Math.abs(i/3-array[i]/3);
+            int heightDif = Math.abs(i/3-array[i]/3);
+            // heightDif*=heightDif;
+            int widthDif = Math.abs(i%3-array[i]%3);
+            // widthDif*=widthDif;
+            int n = heightDif+widthDif;
             if (array[i]==0) n=0;
             total += n;
         }
 
         if (array[6]==(array[7]-1) && (array[8]-2)==6 && array[6]==array[8]-2) {
-            total-=2;
+            total-=num;
         }
         if (array[2]==2 && array[5]==5 && array[8]==8) {
-            total-=2;
+            total-=num;
         }
         return total;
     }
@@ -145,7 +180,7 @@ public class Solver extends JFrame implements ActionListener {
         return tmp;
     }
 
-    // Helps find the index of a specific numer in an array
+    // Helps find the index of a specific number in an array
     public static int findIndex(int[] array, int num) {
         for (int i=0; i<array.length; i++) {
             if (array[i]==num) {
@@ -188,10 +223,19 @@ public class Solver extends JFrame implements ActionListener {
         return arr;
     }
 
+    public static boolean keepGoing(int[] arr) {
+        for (int i=0; i<arr.length; i++) {
+            if (arr[i]-i!=0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public String solve() {
         String[] choice = {stringy(arrNum,-1), "", "0"}; // Initial State
         // int i = 0;
-        for (int calc = calculate(arrNum); calc!=0; calc=calculate(arrNum)) { // Calculate how far away the board state is, stop if it's correct, and calculate each time
+        while (keepGoing(arrNum)) { // Calculate how far away the board state is, stop if it's correct, and calculate each time
             int index = findIndex(arrNum, 0);
 
             doCalc(index/3, index, -3, choice[1]);
@@ -205,11 +249,13 @@ public class Solver extends JFrame implements ActionListener {
             // System.out.println(choice[0].substring(9));
             int[] newArr = unString(choice[0]);
             completeSwap(newArr);
+            changeDisplay();
             // System.out.println(closed);
             // System.out.println(test);
             // wait(.5);
             // i++;
             // System.out.println(i +":"+ choice[0].substring(9));
+            // System.out.println(calc+choice[1].length());
         }
         // System.out.println(choice[1]);
         start = false;
@@ -220,15 +266,17 @@ public class Solver extends JFrame implements ActionListener {
         String choice = closed.get(0);
         int[] deStringed = unString(choice);
         completeSwap(deStringed);
+        changeDisplay();
 
         int index = findIndex(arrNum, 0);
         String mult = "ulrd";
 
-        System.out.println(answer);
+        System.out.println(answer + ": " + answer.length());
+        wait(3.0);
         for (int i=0; i<answer.length(); i++) {
             int swapper = index + mult.indexOf(answer.charAt(i))*2-3;
             // System.out.println(index + ": " + swapper + ": " + answer.charAt(i));
-            swap(index, swapper);
+            swapDisplay(index, swapper);
             index=swapper;
             wait(1.75);
         }
