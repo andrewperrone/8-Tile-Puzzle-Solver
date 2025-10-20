@@ -183,7 +183,7 @@ public class Solver extends JFrame implements ActionListener {
 
     public String solve() {
         String[] choice = {stringy(arrNum,-1), "", "0"}; // Initial State
-        int i = 0;
+        // int i = 0;
         for (int calc = calculate(arrNum); calc!=0; calc=calculate(arrNum)) { // Calculate how far away the board state is, stop if it's correct, and calculate each time
             int index = findIndex(arrNum, 0);
 

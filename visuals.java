@@ -193,7 +193,6 @@ public class visuals extends JFrame implements ActionListener {
     }
 
     // Uses A* to solve the board
-    @SuppressWarnings("unused")
     public void solve() {
         for (int calc = calculate(); calc!=0; calc=calculate()) {
             int[] totals = getChoices();
