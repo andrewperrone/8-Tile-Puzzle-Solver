@@ -69,7 +69,7 @@ public class Solver extends JFrame implements ActionListener {
                 a.open.clear(); // clear out the old states-to-use data
             }
             else {
-                wait(1.0); // Keeps the while loop and JFrame in sync
+                wait(.01); // Keeps the while loop and JFrame in sync
             }
         }
     }
@@ -281,13 +281,13 @@ public class Solver extends JFrame implements ActionListener {
         String mult = "ulrd";
 
         System.out.println(answer + ": " + answer.length());
-        wait(3.0);
+        wait(.2);
         for (int i=0; i<answer.length(); i++) {
             int swapper = index + mult.indexOf(answer.charAt(i))*2-3;
             // System.out.println(index + ": " + swapper + ": " + answer.charAt(i));
             swapDisplay(index, swapper);
             index=swapper;
-            wait(1.75);
+            wait(.75);
         }
     }
 }
