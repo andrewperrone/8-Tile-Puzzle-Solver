@@ -297,7 +297,7 @@ public class Solver extends JFrame implements ActionListener {
         String mult = "ulrd";
 
         System.out.println(answer + ": " + answer.length());
-        wait(3.0);
+        wait(1.0);
         for (int i=0; i<answer.length(); i++) {
             int swapper = index + mult.indexOf(answer.charAt(i))*2-3;
             // System.out.println(index + ": " + swapper + ": " + answer.charAt(i));
