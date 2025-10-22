@@ -50,16 +50,17 @@ public class Solver extends JFrame implements ActionListener {
             add(arr[i]);
         }
         add(random);
-        random.addActionListener(this); //TODO: Remove Leaking Constructor. Best way would be to have a method that adds buttons after board creation
+         //TODO: Remove Leaking Constructor. Best way would be to have a method that adds buttons after board creation
         add(new JTextArea("<-Randomize Board\n\n\n\n\n                     Solve Board->"));
         add(solve);
-        solve.addActionListener(this);
+        
     }
 
     public static void main(String[] args) {
         //Set up the board
         Solver a = new Solver();
         a.setVisible(true);
+        a.setup();
         String answer = ""; // Solution to the randomized board
         if (args.length >0) {
             a.specificState(args[0]);
@@ -81,6 +82,11 @@ public class Solver extends JFrame implements ActionListener {
                 wait(1.0); // Keeps the while loop and JFrame in sync
             }
         }
+    }
+
+    public void setUp() { // Sets up the Buttons for the JFrame
+        random.addActionListener(this);
+        solve.addActionListener(this);
     }
 
     // If you want to set the solver to a specific state
