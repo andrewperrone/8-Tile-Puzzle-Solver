@@ -35,6 +35,7 @@ public class Solver extends JFrame implements ActionListener {
     // Tells me that we've started solving
     boolean start = false;
 
+    boolean started = false;
     //String test = "";
 
     //Creates the board
@@ -66,19 +67,18 @@ public class Solver extends JFrame implements ActionListener {
         //Set up the board
         Solver a = new Solver();
         a.setVisible(true);
-        boolean started = false; // Whether it has started the replay or not
         String answer = ""; // Solution to the randomized board
 
 
         while (true) {
-            if (a.start==true) {
+            if (a.start) {
                 answer = a.solve(); // Start the solving proccess
-                started = true; // Code will now begin the replay
+                a.started = true; // Code will now begin the replay
                 a.start=false; // No longer trying to solve
             }
-            else if (started==true) {
+            else if (a.started) {
                 a.slowmo(answer); // Replay the solve
-                started=false; // Replay has ended
+                a.started=false; // Replay has ended
                 a.closed.clear(); // clear out the old states-used data
                 a.open.clear(); // clear out the old states-to-use data
             }
@@ -155,6 +155,9 @@ public class Solver extends JFrame implements ActionListener {
 
     // interact with the buttons here
     @Override public void actionPerformed(ActionEvent e) { //add @Overide notation because that's how events work I think
+        if (started || start) {
+            return;
+        }
         if (e.getSource()==random) {
             randomize();
         }
