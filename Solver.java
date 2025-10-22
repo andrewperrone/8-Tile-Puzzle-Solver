@@ -13,12 +13,11 @@
  * TODO: BUG - Currently pressing random while the program is solving breaks the game
  */
  
-import java.util.*;
-//import java.io.*;
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.*;
+import javax.swing.*;
 
 public class Solver extends JFrame implements ActionListener {
     // Text area to represent the numbers
@@ -30,13 +29,13 @@ public class Solver extends JFrame implements ActionListener {
     // button to use A*
     JButton solve = new JButton("Solve");
     // Prioritize which path to go down based on which path has the smallest calculate
-    PriorityQueue<String[]> open = new PriorityQueue<String[]>((i1, i2) -> Integer.compare(Integer.parseInt(i1[2]),Integer.parseInt(i2[2])));
+    PriorityQueue<String[]> open = new PriorityQueue<>((i1, i2) -> Integer.compare(Integer.parseInt(i1[2]),Integer.parseInt(i2[2])));
     // Configurations already tried
     ArrayList<String> closed = new ArrayList<>(1000000);
     // Tells me that we've started solving
     boolean start = false;
 
-    String test = "";
+    //String test = "";
 
     //Creates the board
     public Solver() {
@@ -57,7 +56,7 @@ public class Solver extends JFrame implements ActionListener {
             add(arr[i]);
         }
         add(random);
-        random.addActionListener(this);
+        random.addActionListener(this); //TODO: Remove Leaking Constructor. Best way would be to have a method that adds buttons after board creation
         add(new JTextArea("<-Randomize Board\n\n\n\n\n                     Solve Board->"));
         add(solve);
         solve.addActionListener(this);
@@ -84,7 +83,7 @@ public class Solver extends JFrame implements ActionListener {
                 a.open.clear(); // clear out the old states-to-use data
             }
             else {
-                wait(.01); // Keeps the while loop and JFrame in sync
+                wait(1.0); // Keeps the while loop and JFrame in sync
             }
         }
     }
@@ -92,7 +91,7 @@ public class Solver extends JFrame implements ActionListener {
     // Randomizes the board, and re-runs if the board isn't solvable
     public void randomize() {
         // randomize
-        ArrayList<Integer> list = new ArrayList<Integer>(arr.length);
+        ArrayList<Integer> list = new ArrayList<>(arr.length);
         for (int i=0; i<arr.length; i++) {
             list.add(i);
         }
@@ -140,9 +139,10 @@ public class Solver extends JFrame implements ActionListener {
 
     // Swap all pieces with each other
     public void completeSwap(int[] array) {
-        for (int i=0; i<array.length; i++) {
-            arrNum[i] = array[i];
-        }
+        arrNum = array; //removed manual array copy
+        // for (int i=0; i<array.length; i++) {
+        //     arrNum[i] = array[i];
+        // }
     }
 
     //set the display to the current board
@@ -154,7 +154,7 @@ public class Solver extends JFrame implements ActionListener {
     }
 
     // interact with the buttons here
-    public void actionPerformed(ActionEvent e) {
+    @Override public void actionPerformed(ActionEvent e) { //add @Overide notation because that's how events work I think
         if (e.getSource()==random) {
             randomize();
         }
@@ -191,7 +191,8 @@ public class Solver extends JFrame implements ActionListener {
         return total;
     }
 
-    // turn arrays into a string
+    // turn arrays into a string 
+    // changed stringy -> toString
     public static String toString(int[] array) {
         String tmp = "";
         for (int i=0; i<array.length; i++) {
@@ -238,7 +239,7 @@ public class Solver extends JFrame implements ActionListener {
             Thread.sleep((int)(time*1000));
         }
         catch(Exception e) {
-
+            System.out.println("Exception: " + e.toString());
         }
     }
 
@@ -296,17 +297,13 @@ public class Solver extends JFrame implements ActionListener {
         String mult = "ulrd";
 
         System.out.println(answer + ": " + answer.length());
-        wait(.2);
+        wait(3.0);
         for (int i=0; i<answer.length(); i++) {
             int swapper = index + mult.indexOf(answer.charAt(i))*2-3;
             // System.out.println(index + ": " + swapper + ": " + answer.charAt(i));
             swapDisplay(index, swapper);
-            index=swapper;
-<<<<<<< Updated upstream
-            wait(.75);
-=======
+            index = swapper;
             wait(0.75); //changed time 1.75 -> 0.75
->>>>>>> Stashed changes
         }
     }
 }
