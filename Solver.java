@@ -20,22 +20,15 @@ import java.util.*;
 import javax.swing.*;
 
 public class Solver extends JFrame implements ActionListener {
-    // Text area to represent the numbers
-    JTextField[] arr = new JTextField[9];
-    // integer representation of where the numbers are
-    int[] arrNum = new int[arr.length];
-    //button that will randomize
-    JButton random = new JButton("Random");
-    // button to use A*
-    JButton solve = new JButton("Solve");
+    JTextField[] arr = new JTextField[9]; // Text area to represent the numbers
+    JButton random = new JButton("Random");//button that will randomize
+    JButton solve = new JButton("Solve"); // button to use A*
     // Prioritize which path to go down based on which path has the smallest calculate
+    int[] arrNum = new int[arr.length]; // integer representation of where the numbers are
     PriorityQueue<String[]> open = new PriorityQueue<>((i1, i2) -> Integer.compare(Integer.parseInt(i1[2]),Integer.parseInt(i2[2])));
-    // Configurations already tried
-    ArrayList<String> closed = new ArrayList<>(1000000);
-    // Tells me that we've started solving
-    boolean start = false;
-
-    boolean started = false;
+    ArrayList<String> closed = new ArrayList<>(1000000); // Configurations already tried
+    boolean start = false; // Tells me that we've started solving
+    boolean started = false; // Tells us that we've started the slowmo
     //String test = "";
 
     //Creates the board
@@ -68,7 +61,9 @@ public class Solver extends JFrame implements ActionListener {
         Solver a = new Solver();
         a.setVisible(true);
         String answer = ""; // Solution to the randomized board
-
+        if (args.length >0) {
+            a.specificState(args[0]);
+        }
 
         while (true) {
             if (a.start) {
@@ -86,6 +81,13 @@ public class Solver extends JFrame implements ActionListener {
                 wait(1.0); // Keeps the while loop and JFrame in sync
             }
         }
+    }
+
+    // If you want to set the solver to a specific state
+    public void specificState(String state) {
+        int[] array = unString(state);
+        completeSwap(array);
+        changeDisplay();
     }
 
     // Randomizes the board, and re-runs if the board isn't solvable
