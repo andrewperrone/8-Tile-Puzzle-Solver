@@ -1,3 +1,18 @@
+/* Solver.java
+ * Solves the a random 8-Tile puzzle using the A-Star Algorithm
+ * 
+ * Not all states are solveable:
+ * N is the length of a side of a puzzle
+ * An inversion is TODO
+ * If N is odd, the puzzle instance is solvable if the number of inversions is even in the input state
+ * If N is even, the puzzle instance is solvable if:
+ *      -The blank space is on an even row counting from the bottom and the number of inversions is odd
+ *      -The blank space is on an odd row counting from the bottom and the number of inversions is even
+ * For all cases, the puzzle instance is not solvable 
+ * 
+ * TODO: BUG - Currently pressing random while the program is solving breaks the game
+ */
+ 
 import java.util.*;
 //import java.io.*;
 import javax.swing.*;
@@ -177,7 +192,7 @@ public class Solver extends JFrame implements ActionListener {
     }
 
     // turn arrays into a string
-    public static String stringy(int[] array) {
+    public static String toString(int[] array) {
         String tmp = "";
         for (int i=0; i<array.length; i++) {
             tmp+=array[i];
@@ -207,7 +222,7 @@ public class Solver extends JFrame implements ActionListener {
 
             swap(index, index+addIndex);
 
-            String tmp = stringy(arrNum);
+            String tmp = toString(arrNum);
 
             if (!closed.contains(tmp)) {
                 String[] toAdd = new String[] {tmp,moves, (calculate(arrNum)+moves.length())+""};
@@ -248,7 +263,7 @@ public class Solver extends JFrame implements ActionListener {
 
     // solves the board
     public String solve() {
-        String[] choice = {stringy(arrNum), "", "0"}; // Initial State
+        String[] choice = {toString(arrNum), "", "0"}; // Initial State
         while (keepGoing(arrNum)) { // Calculate how far away the board state is, stop if it's correct, and calculate each time
             int index = findIndex(arrNum, 0);
 
@@ -287,7 +302,11 @@ public class Solver extends JFrame implements ActionListener {
             // System.out.println(index + ": " + swapper + ": " + answer.charAt(i));
             swapDisplay(index, swapper);
             index=swapper;
+<<<<<<< Updated upstream
             wait(.75);
+=======
+            wait(0.75); //changed time 1.75 -> 0.75
+>>>>>>> Stashed changes
         }
     }
 }
