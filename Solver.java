@@ -62,8 +62,13 @@ public class Solver extends JFrame implements ActionListener {
         a.setVisible(true);
         a.setUp();
         String answer = ""; // Solution to the randomized board
-        if (args.length >0) {
+        if (args.length >0 && args[0].length()==9) {
             a.specificState(args[0]);
+            if (!solvable(a.arrNum)) {
+                a = new Solver();
+                a.setVisible(true);
+                a.setUp();
+            }
         }
 
         while (true) {
@@ -112,22 +117,28 @@ public class Solver extends JFrame implements ActionListener {
                 arr[i].setText("");
             }
         }
+        if (!solvable(arrNum)) { // Re-randomize if it's unsolvable
+            randomize();
+        }
+    }
+
+    public static boolean solvable(int[] array) {
         //check if it's solvable
         int count = 0;
-        for (int i=0; i<arrNum.length; i++) {
-            if (arrNum[i]!=0) {
-                for (int j=i+1; j<arrNum.length; j++) {
-                    if (arrNum[j]!=0) {
-                        if (arrNum[i]>arrNum[j]) {
+        int total = 0;
+        for (int i=0; i<array.length; i++) {
+            total+=array[i];
+            if (array[i]!=0) {
+                for (int j=i+1; j<array.length; j++) {
+                    if (array[j]!=0) {
+                        if (array[i]>array[j]) {
                             count++;
                         }
                     }
                 }
             }
         }
-        if (count%2==1) { // Re-randomize if it's unsolvable
-            randomize();
-        }
+        return count%2==0 && total==36;
     }
 
     // [Helper Function] Swap two pieces with each other
@@ -276,6 +287,7 @@ public class Solver extends JFrame implements ActionListener {
     // solves the board
     public String solve() {
         String[] choice = {toString(arrNum), "", "0"}; // Initial State
+        // int i = 0; // Test code
         while (keepGoing(arrNum)) { // Calculate how far away the board state is, stop if it's correct, and calculate each time
             int index = findIndex(arrNum, 0);
 
@@ -291,6 +303,7 @@ public class Solver extends JFrame implements ActionListener {
             completeSwap(newArr); // swap the current array with the new one
 
             changeDisplay(); // cool visual effects
+            // System.out.println(i); i++;
         }
 
         start = false;
