@@ -293,6 +293,9 @@ public class Solver extends JFrame implements ActionListener {
 
     // shows the user how the board was solved
     public void slowmo(String answer) {
+        if (closed.size()==0) {
+            return;
+        }
         String choice = closed.get(0);
         int[] deStringed = unString(choice);
         completeSwap(deStringed);
