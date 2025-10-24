@@ -60,7 +60,7 @@ public class Solver extends JFrame implements ActionListener {
         //Set up the board
         Solver a = new Solver();
         a.setVisible(true);
-        a.setup();
+        a.setUp();
         String answer = ""; // Solution to the randomized board
         if (args.length >0) {
             a.specificState(args[0]);
