@@ -194,7 +194,7 @@ public class Solver extends JFrame implements ActionListener {
      */
     public static int calculate(int[] array) {
         int total = 0;
-        for (int i=0; i<array.length-1; i++) {
+        for (int i=0; i<array.length; i++) {
             int heightDif = Math.abs(i/3-array[i]/3);
             int widthDif = Math.abs(i%3-array[i]%3);
 
