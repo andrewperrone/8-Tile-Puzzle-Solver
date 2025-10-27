@@ -185,7 +185,7 @@ public class Solver extends JFrame implements ActionListener {
         }
     }
 
-    // [Helper Function] Calculate how far away the solver is from solving the board completely
+    // [Helper Function] Calculate how far away the solver is from solving the board completely, Heuristics function
     /*
      * 0 1 2
      * 3 4 5
@@ -247,12 +247,17 @@ public class Solver extends JFrame implements ActionListener {
 
             String tmp = toString(arrNum);
 
-            if (!closed.contains(tmp)) {
-                String[] toAdd = new String[] {tmp,moves, (calculate(arrNum)+moves.length())+""};
+            if (!closed.contains(tmp)) { // A* Calculated here
+                String[] toAdd = new String[] {tmp,moves, aStar(arrNum, moves)+""};
                 open.add(toAdd);
             }
             swap(index+addIndex,index);
         }
+    }
+
+    // h(n) + c(n)
+    public int aStar(int[] array, String moves) {
+        return calculate(array) + moves.length();
     }
 
     // Simple wait command to slow down the replay
